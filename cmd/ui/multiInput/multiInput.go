@@ -1,17 +1,30 @@
 package multiInput
 
 import (
+	"PSU/cmd/ui/styles"
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
-var (
-	focusedStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#31E981"))
-	titleStyle = lipgloss.NewStyle().
-		Background(lipgloss.Color("#4E148C"))
-)
+// var (
+// 	defaultStyle		= lipgloss.NewStyle().
+// 							Foreground(lipgloss.Color("#97DFFC"))
+
+// 	focusedStyle 		= lipgloss.NewStyle().
+// 							Foreground(lipgloss.Color("#4E148C"))
+
+// 	chooseStyle 		= lipgloss.NewStyle().
+// 							Foreground(lipgloss.Color("#4E148C")).
+// 							Bold(true).
+// 							Italic(true)
+
+// 	textFocusedStyle 	= lipgloss.NewStyle().
+// 							Foreground(lipgloss.Color("#858AE3"))
+
+// 	titleStyle 			= lipgloss.NewStyle().
+// 							Background(lipgloss.Color("#4E148C"))
+// )
 
 type Selection struct {
 	choice string
@@ -31,7 +44,7 @@ type model struct {
 
 func InitialModel(header string, selection *Selection, choices []string) model {
 	return model {
-		header: titleStyle.Render(header),
+		header: styles.TitleStyle.Render(header),
 		choices: choices,
 		selected: make(map[int]struct{}),
 		choice: selection,
@@ -62,6 +75,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if len(m.selected) == 1 {
 				m.selected = make(map[int]struct{})
 			}
+
 			_, ok := m.selected[m.cursor]
 			if ok {
 				delete(m.selected, m.cursor)
@@ -76,20 +90,22 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	s := "\n" + m.header + "\n"
+	s := m.header + "\n"
 
 	for i, choice := range m.choices {
 		cursor := " "
 		if m.cursor == i {
-			cursor = focusedStyle.Render(">")
+			cursor = styles.FocusedStyle.Render(">")
+			choice = styles.TextFocusedStyle.Render(choice)
 		}
 
 		checked := " "
 		if _, ok := m.selected[i]; ok {
-			checked = focusedStyle.Render("x")
+			checked = styles.ChooseStyle.Render("x")
+			choice = styles.ChooseStyle.Render(choice)
 		}
 
-		s += fmt.Sprintf("\n%s [%s] %s\n", cursor, checked, choice)
+		s += fmt.Sprintf("\n%s [%s] %s\n", cursor, checked, styles.DefaultStyle.Render(choice))
 	}
 
 	return s

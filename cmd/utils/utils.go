@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/lipgloss"
 )
@@ -38,4 +39,16 @@ func HexToRGB(c lipgloss.Color) (r, g, b uint8) {
 	var rr, gg, bb int
 	fmt.Sscanf(string(c), "#%02X%02X%02X", &rr, &gg, &bb)
 	return uint8(rr), uint8(gg), uint8(bb)
+}
+
+func ValidateProjectName(n string) (bool, error) {
+	nonValidChars := [11]string{" ", ".", "\\", "<", ">", ":", "\"", "/", "|", "?", "*"}
+	
+	for i := 0; i < len(nonValidChars); i++ {
+		if strings.Contains(n, nonValidChars[i]) {
+			return false, fmt.Errorf("non-valid chars in the name of the project")
+		}
+	}
+
+	return true, nil
 }

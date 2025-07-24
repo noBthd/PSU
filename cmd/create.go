@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"PSU/cmd/ui/multiInput"
+	textinput "PSU/cmd/ui/textInput"
 	"PSU/cmd/utils"
 )
 
@@ -38,7 +39,7 @@ type listOptions struct {
 }
 
 type Options struct {
-	ProjectName *string
+	ProjectName *textinput.Output
 	ProjectLang *multiInput.Selection
 }
 
@@ -82,6 +83,7 @@ var createCmd = &cobra.Command{
 		fmt.Println(lipgloss.JoinVertical(lipgloss.Left, gradientLines...) + "\n")
 
 		options := Options {
+			ProjectName: &textinput.Output{},
 			ProjectLang: &multiInput.Selection{},
 		}
 
@@ -89,12 +91,21 @@ var createCmd = &cobra.Command{
 			options: []string{
 				"C++",
 				"Golang",
+				"test1",
+				"test2",
 			},
 		}
 
-		tprogram := tea.NewProgram(multiInput.InitialModel("Choose language to use:", options.ProjectLang, listOfStuff.options))
+		tprogram := tea.NewProgram(textinput.InitialModel(options.ProjectName, "Enter project name:"))
 		if _, err := tprogram.Run(); err != nil {
 			cobra.CheckErr(err)
 		}
+
+		tprogram = tea.NewProgram(multiInput.InitialModel("Choose language to use:", options.ProjectLang, listOfStuff.options))
+		if _, err := tprogram.Run(); err != nil {
+			cobra.CheckErr(err)
+		}
+
+
 	},
 }
