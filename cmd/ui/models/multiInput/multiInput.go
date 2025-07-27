@@ -12,11 +12,11 @@ import (
 )
 
 type Selection struct {
-	choice string
+	Choice string
 }
 
 func (s *Selection) Update(val string) {
-	s.choice = val
+	s.Choice = val
 }
 
 type model struct {
@@ -81,6 +81,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			case "y":
 				if len(m.selected) != 0 {
 					m.confirm = true
+					m.help.ShowAll = false
 					return m, tea.Quit
 				}
 
@@ -99,6 +100,7 @@ func (m model) View() string {
 		cursor := " "
 		if m.cursor == i {
 			cursor = styles.FocusedStyle.Render(">")
+			m.choice.Choice = choice
 			choice = styles.TextFocusedStyle.Render(choice)
 		}
 
@@ -108,13 +110,13 @@ func (m model) View() string {
 			choice = styles.ChooseStyle.Render(choice)
 		}
 
-		s += fmt.Sprintf("\n%s [%s] %s\n", cursor, checked, styles.DefaultStyle.Render(choice))
+		s += fmt.Sprintf("\n%s [%s] %s", cursor, checked, styles.DefaultStyle.Render(choice))
 	}
 
-	height := 8 - strings.Count(s, "\n")
-	return s + strings.Repeat("\n", height) + m.help.View(m.keys)
+	return s + strings.Repeat("\n", 2) + m.help.View(m.keys)
 }
 
 func (m model) Init() tea.Cmd {
 	return nil
 }
+

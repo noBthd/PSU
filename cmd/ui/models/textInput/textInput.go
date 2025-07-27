@@ -36,9 +36,9 @@ type model struct {
 	err error
 }
 
-func InitialModel(o *Output, header string) model {
+func InitialModel(o *Output, header string, plaseholder string) model {
 	ti := textinput.New()
-	ti.Placeholder = "language?"
+	ti.Placeholder = plaseholder
 	ti.Focus()
 	ti.CharLimit = 156
 	ti.Width = 20
@@ -60,15 +60,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 
-		case tea.KeyMsg:
+		case tea.KeyMsg:	
 			switch msg.Type {
 				case tea.KeyEnter, tea.KeyCtrlC, tea.KeyEsc:
 					input := m.textInput.Value()
 					m.valid = !utils.ValidateProjectName(input)
 
 					if !utils.ValidateProjectName(input) || len(input) == 0 {
-						m.msg = "Invalid projetc name: '" + input + "'\n try not to use special symbols"
-
+						m.msg = "Invalid projetc name: '" + input + "' try not to use special symbols"
+						//TODO: add alerting user in overlayed plate
 						return m, nil
 					}
 					

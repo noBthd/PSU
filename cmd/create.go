@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 
+	p "PSU/cmd/project"
 	"PSU/cmd/ui/models/multiInput"
 	textinput "PSU/cmd/ui/models/textInput"
 	"PSU/cmd/utils"
@@ -28,7 +29,8 @@ const logo = `
 // VARS
 var (
 	ProjectNameIsValid = false
-	tprogram *tea.Program
+	tprogram 	*tea.Program
+	Project 	*p.Project
 )
 
 // MAIN
@@ -41,8 +43,13 @@ type listOptions struct {
 }
 
 type Options struct {
-	ProjectName *textinput.Output
-	ProjectLang *multiInput.Selection
+	project 		*p.Project
+
+	ProjectName 	*textinput.Output
+	ProjectLang 	*multiInput.Selection
+	ProjectGit  	*multiInput.Selection
+	ProjectGitLink	*textinput.Output
+
 }
 
 var createCmd = &cobra.Command{
@@ -85,28 +92,43 @@ var createCmd = &cobra.Command{
 		fmt.Println(lipgloss.JoinVertical(lipgloss.Left, gradientLines...) + "\n")
 
 		options := Options {
-			ProjectName: &textinput.Output{},
-			ProjectLang: &multiInput.Selection{},
+			project: 	 	&p.Project{},
+
+			ProjectName: 	&textinput.Output{},
+			ProjectLang: 	&multiInput.Selection{},
+			ProjectGit:  	&multiInput.Selection{},
+			ProjectGitLink: &textinput.Output{},
 		}
 
-		listOfStuff := listOptions {
+		simpleChoose := listOptions {
 			options: []string{
-				"C++",
-				"Golang",
+				"yes",
+				"no",
 			},
 		}
 
 		if !ProjectNameIsValid {
-			tprogram = tea.NewProgram(textinput.InitialModel(options.ProjectName, "Enter project name:"))
+			tprogram = tea.NewProgram(textinput.InitialModel(options.ProjectName, "Enter project name:", "Name?"))
 			if _, err := tprogram.Run(); err != nil {
 				log.Printf("error in running the program")
 				cobra.CheckErr(err)
 			}
 		}
 
-		tprogram = tea.NewProgram(multiInput.InitialModel("Choose language to use:", options.ProjectLang, listOfStuff.options))
+		tprogram = tea.NewProgram(multiInput.InitialModel("Create git repo?:", options.ProjectGit, simpleChoose.options))
 		if _, err := tprogram.Run(); err != nil {
 			cobra.CheckErr(err)
+		}
+
+		log.Print(options.ProjectGit.Choice)
+		log.Print(simpleChoose.options[0])
+
+		if options.ProjectGit.Choice == simpleChoose.options[0] {
+			tprogram = tea.NewProgram(textinput.InitialModel(options.ProjectGitLink, "Enter github link:", "Link?"))
+			if _, err := tprogram.Run(); err != nil {
+				log.Printf("error in running the program")
+				cobra.CheckErr(err)
+			}	
 		}
 	},
 }
