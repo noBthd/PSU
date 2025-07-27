@@ -118,6 +118,3 @@ func (m model) View() string {
 func (m model) Init() tea.Cmd {
 	return nil
 }
-
-
-// HELP MODEL
