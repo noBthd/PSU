@@ -68,6 +68,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 					if !utils.ValidateProjectName(input) || len(input) == 0 {
 						m.msg = "Invalid projetc name: '" + input + "'\n try not to use special symbols"
+
 						return m, nil
 					}
 					

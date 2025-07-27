@@ -1,10 +1,14 @@
 package multiInput
 
 import (
+	h "PSU/cmd/ui/models/help"
 	"PSU/cmd/ui/styles"
 	"fmt"
+	"strings"
 
+	"github.com/charmbracelet/bubbles/help"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Selection struct {
@@ -21,6 +25,11 @@ type model struct {
 	selected map[int]struct{}
 	choice *Selection
 	header string
+	confirm bool 
+
+	keys h.KeyMap
+	help help.Model
+	inputStyle lipgloss.Style
 }
 
 func InitialModel(header string, selection *Selection, choices []string) model {
@@ -29,6 +38,11 @@ func InitialModel(header string, selection *Selection, choices []string) model {
 		choices: choices,
 		selected: make(map[int]struct{}),
 		choice: selection,
+		confirm: false,
+
+		keys:       h.Keys,
+		help:       help.New(),
+		inputStyle: lipgloss.NewStyle().Foreground(lipgloss.Color("#FF75B7")),
 	}
 }
 
@@ -63,7 +77,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				} else {
 					m.selected[m.cursor] = struct{}{}
 				}
+			
+			case "y":
+				if len(m.selected) != 0 {
+					m.confirm = true
+					return m, tea.Quit
+				}
 
+			case "?":
+					m.help.ShowAll = !m.help.ShowAll
 		}
 	}
 
@@ -89,9 +111,13 @@ func (m model) View() string {
 		s += fmt.Sprintf("\n%s [%s] %s\n", cursor, checked, styles.DefaultStyle.Render(choice))
 	}
 
-	return s
+	height := 8 - strings.Count(s, "\n")
+	return s + strings.Repeat("\n", height) + m.help.View(m.keys)
 }
 
 func (m model) Init() tea.Cmd {
 	return nil
 }
+
+
+// HELP MODEL

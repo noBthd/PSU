@@ -28,6 +28,7 @@ const logo = `
 // VARS
 var (
 	ProjectNameIsValid = false
+	tprogram *tea.Program
 )
 
 // MAIN
@@ -95,8 +96,6 @@ var createCmd = &cobra.Command{
 			},
 		}
 
-		var tprogram *tea.Program
-
 		if !ProjectNameIsValid {
 			tprogram = tea.NewProgram(textinput.InitialModel(options.ProjectName, "Enter project name:"))
 			if _, err := tprogram.Run(); err != nil {
@@ -109,7 +108,5 @@ var createCmd = &cobra.Command{
 		if _, err := tprogram.Run(); err != nil {
 			cobra.CheckErr(err)
 		}
-
-
 	},
 }
