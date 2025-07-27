@@ -7,25 +7,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// var (
-// 	defaultStyle		= lipgloss.NewStyle().
-// 							Foreground(lipgloss.Color("#97DFFC"))
-
-// 	focusedStyle 		= lipgloss.NewStyle().
-// 							Foreground(lipgloss.Color("#4E148C"))
-
-// 	chooseStyle 		= lipgloss.NewStyle().
-// 							Foreground(lipgloss.Color("#4E148C")).
-// 							Bold(true).
-// 							Italic(true)
-
-// 	textFocusedStyle 	= lipgloss.NewStyle().
-// 							Foreground(lipgloss.Color("#858AE3"))
-
-// 	titleStyle 			= lipgloss.NewStyle().
-// 							Background(lipgloss.Color("#4E148C"))
-// )
-
 type Selection struct {
 	choice string
 }
@@ -58,30 +39,30 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch msg.String() {
 
-		case "ctrl+c", "q":
-			return m, tea.Quit
+			case "ctrl+c", "q":
+				return m, tea.Quit
 
-		case "up", "k":
-			if m.cursor > 0 {
-				m.cursor--
-			}
+			case "up", "k":
+				if m.cursor > 0 {
+					m.cursor--
+				}
 
-		case "down", "j":
-			if m.cursor < len(m.choices)-1 {
-				m.cursor++
-			}
+			case "down", "j":
+				if m.cursor < len(m.choices)-1 {
+					m.cursor++
+				}
 
-		case "enter", " ":
-			if len(m.selected) == 1 {
-				m.selected = make(map[int]struct{})
-			}
+			case "enter", " ":
+				if len(m.selected) == 1 {
+					m.selected = make(map[int]struct{})
+				}
 
-			_, ok := m.selected[m.cursor]
-			if ok {
-				delete(m.selected, m.cursor)
-			} else {
-				m.selected[m.cursor] = struct{}{}
-			}
+				_, ok := m.selected[m.cursor]
+				if ok {
+					delete(m.selected, m.cursor)
+				} else {
+					m.selected[m.cursor] = struct{}{}
+				}
 
 		}
 	}

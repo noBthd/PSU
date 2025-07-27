@@ -2,16 +2,18 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/spf13/cobra"
 
-	"PSU/cmd/ui/multiInput"
-	textinput "PSU/cmd/ui/textInput"
+	"PSU/cmd/ui/models/multiInput"
+	textinput "PSU/cmd/ui/models/textInput"
 	"PSU/cmd/utils"
 )
 
+// JUST LOGO
 const logo = `
  ███████████   █████████  █████  █████
 ░░███░░░░░███ ███░░░░░███░░███  ░░███
@@ -23,13 +25,12 @@ const logo = `
 ░░░░░         ░░░░░░░░░    ░░░░░░░░
 `
 
-// var (
-// 	logoStyle 			= lipgloss.NewStyle().
-// 							Foreground(lipgloss.Color("#31E981")).
-// 							Bold(true).
-// 							Align(lipgloss.Center)
-// )
+// VARS
+var (
+	ProjectNameIsValid = false
+)
 
+// MAIN
 func init() {
 	rootCmd.AddCommand(createCmd)
 }
@@ -53,9 +54,9 @@ var createCmd = &cobra.Command{
 		lines = append(lines, utils.SplitLines(logo)...)
 
 		colors := []lipgloss.Color{
-			lipgloss.Color("#2C0735"), 
-			lipgloss.Color("#613DC1"), 
-			lipgloss.Color("#97DFFC"), 
+			lipgloss.Color("#2C0735"),
+			lipgloss.Color("#613DC1"),
+			lipgloss.Color("#97DFFC"),
 		}
 
 		gradientLines := make([]string, len(lines))
@@ -91,14 +92,17 @@ var createCmd = &cobra.Command{
 			options: []string{
 				"C++",
 				"Golang",
-				"test1",
-				"test2",
 			},
 		}
 
-		tprogram := tea.NewProgram(textinput.InitialModel(options.ProjectName, "Enter project name:"))
-		if _, err := tprogram.Run(); err != nil {
-			cobra.CheckErr(err)
+		var tprogram *tea.Program
+
+		if !ProjectNameIsValid {
+			tprogram = tea.NewProgram(textinput.InitialModel(options.ProjectName, "Enter project name:"))
+			if _, err := tprogram.Run(); err != nil {
+				log.Printf("error in running the program")
+				cobra.CheckErr(err)
+			}
 		}
 
 		tprogram = tea.NewProgram(multiInput.InitialModel("Choose language to use:", options.ProjectLang, listOfStuff.options))

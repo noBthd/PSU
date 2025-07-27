@@ -2,14 +2,13 @@ package utils_test
 
 import (
 	"PSU/cmd/utils"
+	"strconv"
 	"testing"
 )
 
 func TestValidateProjectName(t *testing.T) {
-	name := "Test Project"
-
-	_, err := utils.ValidateProjectName(name)
-	if err != nil {
-		t.Errorf("%s: %s", name, err)
+	result := utils.ValidateProjectName("TEST TEST") 
+	if result {
+		t.Errorf("Test has spaces in name of the project got: %s want: %s", strconv.FormatBool(result), "false")
 	}
 }

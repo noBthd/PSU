@@ -41,14 +41,18 @@ func HexToRGB(c lipgloss.Color) (r, g, b uint8) {
 	return uint8(rr), uint8(gg), uint8(bb)
 }
 
-func ValidateProjectName(n string) (bool, error) {
+func ValidateProjectName(n string) bool {
 	nonValidChars := [11]string{" ", ".", "\\", "<", ">", ":", "\"", "/", "|", "?", "*"}
 	
 	for i := 0; i < len(nonValidChars); i++ {
 		if strings.Contains(n, nonValidChars[i]) {
-			return false, fmt.Errorf("non-valid chars in the name of the project")
+			return false
+		}
+
+		if len(n) == 0 {
+			return false
 		}
 	}
 
-	return true, nil
+	return true
 }
